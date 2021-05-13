@@ -1,13 +1,17 @@
-body {
-  font-family: 'Raleway', 'Roboto Mono', monospace;
-}
-
-
 .main {
   padding: 0 !important;
   margin: 0;
   display: flex;
   flex-direction: column;
+}
+
+.insights-hero {
+  background-color: transparent;
+  width: 100%;
+}
+
+.hero h1 {
+  text-align: center;
 }
 
 .secondary {
@@ -19,17 +23,7 @@ body {
   flex: 2;
 }
 
-.hero {
-  background-color: #EC1C24 !important;
-  min-height: 215px;
-}
-
-.hero>h1 {
-  color: white;
-}
-
 .search-content {
-  margin-top: -110px;
   background-color: transparent !important;
 }
 
@@ -39,7 +33,7 @@ body {
 }
 .search-input {
   border-radius: 5px;
-  background-color: pink;
+  background-color: mistyrose;
   padding: 10px 20px;
   box-sizing: content-box;
   display:flex;
@@ -70,11 +64,6 @@ body {
   border-radius: 5px;
   outline: none;
   border: none;
-  background-color: #EC1C24;
-  color: #fff;
-}
-.search-input>button:hover {
-  background-color: #D11C22;
 }
 
 .jobs {
@@ -82,10 +71,10 @@ body {
 }
 
 .job-card {
-  height: 150px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
-  background-color: #EFEFEF;
+  margin: 1rem;
+  background-color: var(--color-card-background);
 }
 
 .job-content {

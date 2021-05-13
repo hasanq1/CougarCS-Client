@@ -1,6 +1,6 @@
 import React from 'react';
-import { Col, Container, Row, Jumbotron, Card } from 'react-bootstrap';
-import { jobs as JobsData } from './jobs';
+import { Col, Container, Row, Card } from 'react-bootstrap';
+import { jobs as JobsData } from '../../data/jobs';
 import './Insights.css';
 
 const ShowJobCards = (jobs) => {
@@ -10,7 +10,7 @@ const ShowJobCards = (jobs) => {
 		let temp = jobs.slice(i * 3, i * 3 + 3);
 		for (let j = 0; j < temp.length; j++) {
 			cards.push(
-				<Col xs={12} md={4}>
+				<Col xs={12} md={6} lg={4}>
 					<JobCard key={j} job={jobs[i * 3 + j]} />
 				</Col>
 			);
@@ -45,12 +45,10 @@ const Insights = () => {
 
 	/** Need some state to fetch and populate a list of jobs */
 	return (
-		<Container fluid className='main'>
-			<Jumbotron fluid className='hero'>
-				<h1>Cougar Insights</h1>
-			</Jumbotron>
-			<Container className='secondary container'>
-				<Container className='search-content'>
+		<Container fluid className='contained hero container-fluid'>
+			<h1 className='title'>Cougar Insights</h1>
+			<Container className='secondary'>
+				<div className='search-content'>
 					<div className='search'>
 						<div className='search-input'>
 							<input value={searchInput} onChange={updateSearchInput} />
@@ -58,7 +56,7 @@ const Insights = () => {
 						</div>
 						<h6>{jobs.length} jobs found</h6>
 					</div>
-				</Container>
+				</div>
 				<Container className='job-content'>{ShowJobCards(jobs)}</Container>
 			</Container>
 		</Container>
@@ -73,7 +71,6 @@ const JobCard = ({ job }) => {
 		<Card className='job-card'>
 			<Card.Body>
 				<Card.Title>
-					<div></div>
 					<div>{company.name}</div>
 				</Card.Title>
 				<Card.Subtitle className='mb-2 text-muted'>{title}</Card.Subtitle>
