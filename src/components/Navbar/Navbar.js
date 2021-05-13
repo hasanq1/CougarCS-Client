@@ -1,8 +1,7 @@
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import logo from '../../assets/logo.png';
-import './Navbar.css';
+import logo from '../../assets/logo.pngimpiimport './Navbar.css';
 
 const NavBar = ({ themeToggler }) => (
 	<Navbar className='main-nav' fluid='true' collapseOnSelect expand='lg'>
@@ -29,6 +28,9 @@ const NavBar = ({ themeToggler }) => (
 				<LinkContainer to='/membership'>
 					<Nav.Link>Membership</Nav.Link>
 				</LinkContainer>
+				<LinkContainer to='/insights'>
+					<Nav.Link>Insights</Nav.Link>
+				</LinkContainer>
 				<LinkContainer to='/hackathons'>
 					<Nav.Link>Hackathons</Nav.Link>
 				</LinkContainer>
@@ -43,9 +45,6 @@ const NavBar = ({ themeToggler }) => (
 						<button className='button'>Register</button>
 					</Nav.Link>
 				</LinkContainer>
-			</Nav>
-		</Navbar.Collapse>
-	</Navbar>
-);
-
-export default NavBar;
+Nav.Link>
+				{/* <DarkMode /> */}
+port default NavBar;

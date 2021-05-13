@@ -14,6 +14,7 @@ import Hackathon from './pages/Hackathon/Hackathon';
 import Privacy from './pages/Policy/Privacy';
 import Gallery from './pages/Gallery/Gallery';
 import GalleryEvent from './pages/Gallery/GalleryEvent';
+import Insights from './pages/Insights/Insights';
 import ScrollTop from './components/ScrollTop/ScrollTop';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FourOFour from './components/404/FourOFour';
@@ -38,6 +39,7 @@ const App = () => {
 					<Route path='/membership/' component={Membership} />
 					<Route path='/calendar/' component={Events} />
 					<Route path='/contactus/' component={ContactUs} />
+					<Route path='/insights/' component={Insights} />
 					<Route path='/register/' component={UserRegister} />
 					<Route path='/hackathons/' component={Hackathon}></Route>
 					<Route path='/privacy-policy/' component={Privacy} />
