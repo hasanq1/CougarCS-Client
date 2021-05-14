@@ -18,7 +18,7 @@ export const jobs = [
 		company: {
 			name: 'Apple',
 		},
-		title: 'Software Engineer',
+		title: 'Software Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
 		ApplyNow:
@@ -55,7 +55,7 @@ export const jobs = [
 		company: {
 			name: 'Chevron',
 		},
-		title: 'Software Engineer',
+		title: 'Junior Software Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
 		ApplyNow: 'hyperLink', //button
@@ -64,7 +64,7 @@ export const jobs = [
 		company: {
 			name: 'ExxonMobile',
 		},
-		title: 'Software Engineer',
+		title: 'Web Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
 		ApplyNow: 'hyperLink', //button
@@ -73,7 +73,7 @@ export const jobs = [
 		company: {
 			name: 'Shell',
 		},
-		title: 'Software Engineer',
+		title: 'Android Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
 		ApplyNow: 'hyperLink', //button
@@ -82,7 +82,7 @@ export const jobs = [
 		company: {
 			name: 'Fidelity',
 		},
-		title: 'Software Engineer',
+		title: 'iOS Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
 		ApplyNow: 'hyperLink', //button
@@ -91,7 +91,7 @@ export const jobs = [
 		company: {
 			name: 'JP Morgan & Chase',
 		},
-		title: 'Software Engineer',
+		title: 'Full Stack Software Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
 		ApplyNow: 'hyperLink', //button
@@ -107,9 +107,9 @@ export const jobs = [
 	},
 	{
 		company: {
-			name: 'Bank of America',
+			name: 'Unity Technologies',
 		},
-		title: 'Software Engineer',
+		title: 'Game Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
 		ApplyNow: 'hyperLink', //button

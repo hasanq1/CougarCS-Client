@@ -1,46 +1,32 @@
 import React from 'react';
-import { Col, Container, Row, Card } from 'react-bootstrap';
+import { Suspense } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
 import { jobs as JobsData } from '../../data/jobs';
 import './Insights.css';
+const JobCard = React.lazy(() => import('../../components/Insights/JobCard'));
 
 const ShowJobCards = (jobs) => {
-	let rows = [];
-	for (let i = 0; i < Math.ceil(jobs.length / 3); i++) {
-		let cards = [];
-		let temp = jobs.slice(i * 3, i * 3 + 3);
-		for (let j = 0; j < temp.length; j++) {
-			cards.push(
-				<Col xs={12} md={6} lg={4}>
-					<JobCard key={j} job={jobs[i * 3 + j]} />
-				</Col>
-			);
-		}
-		rows.push(<Row key={i}>{cards}</Row>);
-	}
-	return rows;
+	return jobs.map((job, idx) => (
+		<Col key={idx} xs={12} md={6} lg={4}>
+			<JobCard key={idx} job={job} />
+		</Col>
+	));
 };
 
 const Insights = () => {
-	const [searchInput, setSearchInput] = React.useState('');
 	const [jobs, setJobs] = React.useState(JobsData);
 
 	const updateSearchInput = (event) => {
-		setSearchInput(event.currentTarget.value);
-	};
-
-	const handleSearch = (event) => {
-		if (!searchInput) {
-			setJobs(JobsData);
-		} else {
-			setJobs(
-				JobsData.filter(
-					(job) =>
-						job.company.name === searchInput ||
-						job.title === searchInput ||
-						job.description === searchInput
-				)
-			);
-		}
+		let searchValue = event.currentTarget?.value?.toUpperCase() || '';
+		setJobs(() =>
+			searchValue && searchValue !== ''
+				? JobsData.filter(
+						(job) =>
+							job.company.name.toUpperCase().includes(searchValue) ||
+							job.title.toUpperCase().includes(searchValue)
+				  )
+				: JobsData
+		);
 	};
 
 	/** Need some state to fetch and populate a list of jobs */
@@ -51,32 +37,21 @@ const Insights = () => {
 				<div className='search-content'>
 					<div className='search'>
 						<div className='search-input'>
-							<input value={searchInput} onChange={updateSearchInput} />
-							<button onClick={handleSearch}>Search</button>
+							<input
+								onChange={updateSearchInput}
+								placeholder={'Company name, position'}
+							/>
 						</div>
 						<h6>{jobs.length} jobs found</h6>
 					</div>
 				</div>
-				<Container className='job-content'>{ShowJobCards(jobs)}</Container>
+				<Container className='job-content'>
+					<Suspense fallback={'Loading...'}>
+						<Row>{ShowJobCards(jobs)}</Row>
+					</Suspense>
+				</Container>
 			</Container>
 		</Container>
 	);
 };
 export default Insights;
-
-const JobCard = ({ job }) => {
-	const { company, title, description } = job;
-
-	return (
-		<Card className='job-card'>
-			<Card.Body>
-				<Card.Title>
-					<div>{company.name}</div>
-				</Card.Title>
-				<Card.Subtitle className='mb-2 text-muted'>{title}</Card.Subtitle>
-				<Card.Text>{description}</Card.Text>
-				<Card.Link href='#'></Card.Link>
-			</Card.Body>
-		</Card>
-	);
-};
