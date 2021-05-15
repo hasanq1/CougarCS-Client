@@ -80,3 +80,9 @@
 .job-content {
   background-color: transparent !important;
 }
+
+.insights-loader > .spinner {
+  position: unset !important;
+  background: none !important;
+  transform: none;
+}
