@@ -1,6 +1,6 @@
 import React from 'react';
 import { Suspense } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Button } from 'react-bootstrap';
 import { jobs as JobsData } from '../../data/jobs';
 import './Insights.css';
 import Loading from '../../components/Loading/Loading';
@@ -25,22 +25,31 @@ Notes: paging must stop when there is no more 'next'
 const fetchJobs = (direction, cursor, limit, searchValue) => {
 	return new Promise((resolve) =>
 		setTimeout(() => {
+			console.log(searchValue && searchValue !== '');
+			searchValue = searchValue.toUpperCase();
 			let data =
 				searchValue && searchValue !== ''
 					? [...JobsData]
 							.sort()
-							.filter(
-								(job) =>
-									job.company.name.toUpperCase().includes(searchValue) ||
-									job.title.toUpperCase().includes(searchValue)
-							)
 							.filter((job) =>
 								direction === 'before'
 									? job.company.name < cursor
 									: job.company.name > cursor
 							)
 							.filter((job) => job.company.name > cursor)
-					: [...JobsData].sort();
+					: [...JobsData].sort().filter((job) => {
+							console.log(
+								`${job.company.name.toUpperCase()} :${job.company.name
+									.toUpperCase()
+									.includes('')}`
+							);
+
+							return (
+								job.company.name.toUpperCase().includes('APPLE') ||
+								job.title.toUpperCase().includes(searchValue)
+							);
+					  });
+
 			let afterCursor =
 				data.length > limit ? data[limit - 1].company.name : null;
 			let beforeCursor =
@@ -63,7 +72,7 @@ const fetchJobs = (direction, cursor, limit, searchValue) => {
 };
 const Insights = () => {
 	const jobsReducer = (state, action) => {
-		console.log(`Reducing jobs ${action.type}`);
+		//console.log(`Reducing jobs ${action.type}`);
 		switch (action.type) {
 			case 'APPEND_JOBS':
 				return { ...state, jobs: state.jobs.concat(action.jobs) };
@@ -75,12 +84,11 @@ const Insights = () => {
 	};
 	const [jobsData, jobsDispatch] = React.useReducer(jobsReducer, {
 		jobs: [],
-		cursor: '',
 		fetching: false,
 		totalLength: -1,
 	});
 	const cursorReducer = (state, action) => {
-		console.log(`Reducing cursor ${action.type}`);
+		//console.log(`Reducing cursor ${action.type}`);
 		switch (action.type) {
 			case 'TOGGLE_LOAD':
 				return { ...state, shouldLoadNext: action.shouldLoadNext };
@@ -97,13 +105,14 @@ const Insights = () => {
 		next: '',
 		shouldLoadNext: false,
 	});
+	const [searchVal, setSearchVal] = React.useState('');
 
 	React.useEffect(() => {
 		if (cursor.shouldLoadNext && !jobsData.fetching) {
-			console.log(`Fetching after ${cursor.next}`);
+			//console.log(`Fetching after ${cursor.next}`);
 			jobsDispatch({ type: 'FETCHING_JOBS', fetching: true });
 			cursorDispatch({ type: 'TOGGLE_LOAD', shouldLoadNext: false });
-			fetchJobs('next', cursor.next, 10, '')
+			fetchJobs('next', cursor.next, 10, searchVal) //search state
 				.then((response) => {
 					jobsDispatch({
 						type: 'APPEND_JOBS',
@@ -144,6 +153,13 @@ const Insights = () => {
 	}, [scrollObserver, lazyLoadBoundaryRef]);
 
 	/** Need some state to fetch and populate a list of jobs */
+	const handleSearch = () => {
+		cursorDispatch({ type: 'TOGGLE_LOAD', shouldLoadNext: true });
+	};
+	const handleSearchText = (event) => {
+		setSearchVal(event.currentTarget.value);
+	};
+
 	return (
 		<Container fluid className='contained hero container-fluid'>
 			<h1 className='title'>Cougar Insights</h1>
@@ -151,8 +167,15 @@ const Insights = () => {
 				<div className='search-content'>
 					<div className='search'>
 						<div className='search-input'>
-							<input placeholder={'Company name, position'} />
+							<input
+								value={searchVal}
+								onChange={handleSearchText}
+								placeholder={'Company name, position'}
+							/>
 						</div>
+						<Button variant='danger' onClick={handleSearch}>
+							Search
+						</Button>
 						<h6>{jobsData.jobs.length} jobs found</h6>
 					</div>
 				</div>
@@ -175,4 +198,5 @@ const Insights = () => {
 		</Container>
 	);
 };
+
 export default Insights;

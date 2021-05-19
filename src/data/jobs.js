@@ -21,8 +21,7 @@ export const jobs = [
 		title: 'Software Developer',
 		location: '',
 		description: 'A very concise job description...', //job board link???
-		ApplyNow:
-			'https://uhouston-csm.symplicity.com/students/app/jobs/detail/8c180151b9f28632b75ddda121659a77', //button
+		ApplyNow: 'https://grnh.se/23f25bde1us', //button
 	},
 	{
 		company: {
