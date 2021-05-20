@@ -31,10 +31,10 @@ const fetchJobs = (direction, cursor, limit, searchValue) => {
 				searchValue && searchValue !== ''
 					? [...JobsData]
 							.sort()
-							.filter((job) =>
-								direction === 'before'
-									? job.company.name < cursor
-									: job.company.name > cursor
+							.filter(
+								(job) =>
+									job.company.name.toUpperCase().includes(searchValue) ||
+									job.title.toUpperCase().includes(searchValue)
 							)
 							.filter((job) => job.company.name > cursor)
 					: [...JobsData].sort().filter((job) => {
@@ -78,6 +78,8 @@ const Insights = () => {
 				return { ...state, jobs: state.jobs.concat(action.jobs) };
 			case 'FETCHING_JOBS':
 				return { ...state, fetching: action.fetching };
+			case 'SET_JOBS':
+				return { ...state, jobs: action.jobs };
 			default:
 				return { ...state };
 		}
@@ -130,7 +132,7 @@ const Insights = () => {
 					jobsDispatch({ type: 'FETCHING_JOBS', fetching: false });
 				});
 		}
-	}, [jobsData.fetching, cursor]);
+	}, [jobsData.fetching, cursor, searchVal]);
 
 	let lazyLoadBoundaryRef = React.useRef(null);
 	const scrollObserver = React.useCallback(
@@ -154,6 +156,8 @@ const Insights = () => {
 
 	/** Need some state to fetch and populate a list of jobs */
 	const handleSearch = () => {
+		jobsDispatch({ type: 'SET_JOBS', jobs: [] });
+		cursorDispatch({ type: 'SET_CURSOR', next: '' });
 		cursorDispatch({ type: 'TOGGLE_LOAD', shouldLoadNext: true });
 	};
 	const handleSearchText = (event) => {
