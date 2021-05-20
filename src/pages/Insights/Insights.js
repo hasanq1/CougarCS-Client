@@ -6,8 +6,6 @@ import './Insights.css';
 import Loading from '../../components/Loading/Loading';
 const JobCard = React.lazy(() => import('../../components/Insights/JobCard'));
 
-console.log(JobsData.length);
-
 // Api result based on cursor-pagination from Facebook: https://developers.facebook.com/docs/graph-api/using-graph-api/#paging
 /*
 {
@@ -30,26 +28,26 @@ const compareJobs = (firstJob, secondJob) => {
 	return 0;
 };
 const fetchJobs = (direction, cursor, limit, searchValue) => {
-	console.log(cursor);
 	return new Promise((resolve) =>
 		setTimeout(() => {
 			searchValue = searchValue.toUpperCase();
 			let data =
 				searchValue && searchValue !== ''
-					? [...JobsData]
-							.sort(compareJobs)
+					? JobsData.sort(compareJobs)
 							.filter((job) => job.company.name > cursor)
 							.filter(
 								(job) =>
 									job.company.name.toUpperCase().includes(searchValue) ||
 									job.title.toUpperCase().includes(searchValue)
 							)
-					: [...JobsData]
-							.sort(compareJobs)
-							.filter((job) => job.company.name > cursor);
+							.slice(0, limit)
+					: JobsData.sort(compareJobs)
+							.filter((job) => job.company.name > cursor)
+							.slice(0, limit);
 
 			let afterCursor =
-				data.length > limit ? data[limit - 1].company.name : null;
+				data.length < limit ? null : data[data.length - 1].company.name;
+			// data.length > limit ? data[limit - 1].company.name : null;
 			let beforeCursor =
 				!!cursor && data.length > 1 ? data[0].company.name : null;
 			let response = {
@@ -61,7 +59,6 @@ const fetchJobs = (direction, cursor, limit, searchValue) => {
 					},
 					previous: 'previous_cursor_api_url',
 					next: 'next_cursor_api_url',
-					totalLength: data.length,
 				},
 			};
 			resolve(response);
@@ -76,7 +73,6 @@ const Insights = () => {
 				return {
 					...state,
 					jobs: state.jobs.concat(action.jobs),
-					totalLength: action.totalLength,
 				};
 			case 'FETCHING_JOBS':
 				return { ...state, fetching: action.fetching };
@@ -89,7 +85,6 @@ const Insights = () => {
 	const [jobsData, jobsDispatch] = React.useReducer(jobsReducer, {
 		jobs: [],
 		fetching: false,
-		totalLength: -1,
 	});
 	const cursorReducer = (state, action) => {
 		//console.log(`Reducing cursor ${action.type}`);
@@ -112,29 +107,30 @@ const Insights = () => {
 	const [searchVal, setSearchVal] = React.useState('');
 
 	React.useEffect(() => {
-		if (cursor.shouldLoadNext && !jobsData.fetching) {
-			//console.log(`Fetching after ${cursor.next}`);
-			jobsDispatch({ type: 'FETCHING_JOBS', fetching: true });
-			cursorDispatch({ type: 'TOGGLE_LOAD', shouldLoadNext: false });
-			fetchJobs('next', cursor.next, 10, searchVal) //search state
-				.then((response) => {
-					jobsDispatch({
-						type: 'APPEND_JOBS',
-						jobs: response.data,
-						totalLength: response.paging.totalLength,
-					});
-					cursorDispatch({
-						type: 'SET_CURSOR',
-						next: response.paging.cursors.after,
-					});
-				})
-				.catch((error) => {
-					return error;
-				})
-				.finally(() => {
-					jobsDispatch({ type: 'FETCHING_JOBS', fetching: false });
+		if (!cursor.shouldLoadNext || jobsData.fetching || cursor.next === null)
+			return;
+
+		//console.log(`Fetching after ${cursor.next}`);
+		jobsDispatch({ type: 'FETCHING_JOBS', fetching: true });
+		cursorDispatch({ type: 'TOGGLE_LOAD', shouldLoadNext: false });
+		fetchJobs('next', cursor.next, 10, searchVal) //search state
+			.then((response) => {
+				console.log(response.paging);
+				jobsDispatch({
+					type: 'APPEND_JOBS',
+					jobs: response.data,
 				});
-		}
+				cursorDispatch({
+					type: 'SET_CURSOR',
+					next: response.paging.cursors.after,
+				});
+			})
+			.catch((error) => {
+				return error;
+			})
+			.finally(() => {
+				jobsDispatch({ type: 'FETCHING_JOBS', fetching: false });
+			});
 	}, [jobsData.fetching, cursor, searchVal]);
 
 	let lazyLoadBoundaryRef = React.useRef(null);
@@ -142,13 +138,13 @@ const Insights = () => {
 		(node) => {
 			new IntersectionObserver((entries) => {
 				entries.forEach((entry) => {
-					if (entry.intersectionRatio > 0 && cursor.next !== null) {
+					if (entry.intersectionRatio > 0) {
 						cursorDispatch({ type: 'TOGGLE_LOAD', shouldLoadNext: true });
 					}
 				});
 			}).observe(node);
 		},
-		[cursor, cursorDispatch]
+		[cursorDispatch]
 	);
 
 	React.useEffect(() => {
