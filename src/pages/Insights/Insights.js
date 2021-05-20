@@ -176,10 +176,10 @@ const Insights = () => {
 								onChange={handleSearchText}
 								placeholder={'Company name, position'}
 							/>
+							<Button variant='danger' onClick={handleSearch}>
+								Search
+							</Button>
 						</div>
-						<Button variant='danger' onClick={handleSearch}>
-							Search
-						</Button>
 						<h6>{jobsData.jobs.length} jobs found</h6>
 					</div>
 				</div>
