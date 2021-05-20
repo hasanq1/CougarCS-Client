@@ -6,6 +6,8 @@ import './Insights.css';
 import Loading from '../../components/Loading/Loading';
 const JobCard = React.lazy(() => import('../../components/Insights/JobCard'));
 
+console.log(JobsData.length);
+
 // Api result based on cursor-pagination from Facebook: https://developers.facebook.com/docs/graph-api/using-graph-api/#paging
 /*
 {
@@ -22,33 +24,29 @@ const JobCard = React.lazy(() => import('../../components/Insights/JobCard'));
 We don't really need previous since we are lazy loading forward only
 Notes: paging must stop when there is no more 'next'
 */
+const compareJobs = (firstJob, secondJob) => {
+	if (firstJob.company.name < secondJob.company.name) return -1;
+	if (firstJob.company.name > secondJob.company.name) return 1;
+	return 0;
+};
 const fetchJobs = (direction, cursor, limit, searchValue) => {
+	console.log(cursor);
 	return new Promise((resolve) =>
 		setTimeout(() => {
-			console.log(searchValue && searchValue !== '');
 			searchValue = searchValue.toUpperCase();
 			let data =
 				searchValue && searchValue !== ''
 					? [...JobsData]
-							.sort()
+							.sort(compareJobs)
+							.filter((job) => job.company.name > cursor)
 							.filter(
 								(job) =>
 									job.company.name.toUpperCase().includes(searchValue) ||
 									job.title.toUpperCase().includes(searchValue)
 							)
-							.filter((job) => job.company.name > cursor)
-					: [...JobsData].sort().filter((job) => {
-							console.log(
-								`${job.company.name.toUpperCase()} :${job.company.name
-									.toUpperCase()
-									.includes('')}`
-							);
-
-							return (
-								job.company.name.toUpperCase().includes('APPLE') ||
-								job.title.toUpperCase().includes(searchValue)
-							);
-					  });
+					: [...JobsData]
+							.sort(compareJobs)
+							.filter((job) => job.company.name > cursor);
 
 			let afterCursor =
 				data.length > limit ? data[limit - 1].company.name : null;
@@ -75,7 +73,11 @@ const Insights = () => {
 		//console.log(`Reducing jobs ${action.type}`);
 		switch (action.type) {
 			case 'APPEND_JOBS':
-				return { ...state, jobs: state.jobs.concat(action.jobs) };
+				return {
+					...state,
+					jobs: state.jobs.concat(action.jobs),
+					totalLength: action.totalLength,
+				};
 			case 'FETCHING_JOBS':
 				return { ...state, fetching: action.fetching };
 			case 'SET_JOBS':
@@ -119,6 +121,7 @@ const Insights = () => {
 					jobsDispatch({
 						type: 'APPEND_JOBS',
 						jobs: response.data,
+						totalLength: response.paging.totalLength,
 					});
 					cursorDispatch({
 						type: 'SET_CURSOR',
@@ -186,7 +189,10 @@ const Insights = () => {
 								Search
 							</Button>
 						</div>
-						<h6>{jobsData.jobs.length} jobs found</h6>
+						<h6>
+							{jobsData.jobs.length} jobs found{' '}
+							{jobsData.totalLength > 0 && `of ${jobsData.totalLength}`}
+						</h6>
 					</div>
 				</div>
 				<Container className='job-content'>
