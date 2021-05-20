@@ -142,13 +142,13 @@ const Insights = () => {
 		(node) => {
 			new IntersectionObserver((entries) => {
 				entries.forEach((entry) => {
-					if (entry.intersectionRatio > 0) {
+					if (entry.intersectionRatio > 0 && cursor.next !== null) {
 						cursorDispatch({ type: 'TOGGLE_LOAD', shouldLoadNext: true });
 					}
 				});
 			}).observe(node);
 		},
-		[cursorDispatch]
+		[cursor, cursorDispatch]
 	);
 
 	React.useEffect(() => {
@@ -189,10 +189,7 @@ const Insights = () => {
 								Search
 							</Button>
 						</div>
-						<h6>
-							{jobsData.jobs.length} jobs found{' '}
-							{jobsData.totalLength > 0 && `of ${jobsData.totalLength}`}
-						</h6>
+						<h6>{jobsData.jobs.length} jobs found</h6>
 					</div>
 				</div>
 				<Container className='job-content'>
