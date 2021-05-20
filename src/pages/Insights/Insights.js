@@ -163,6 +163,11 @@ const Insights = () => {
 	const handleSearchText = (event) => {
 		setSearchVal(event.currentTarget.value);
 	};
+	const handleKeyDown = (event) => {
+		if (event.key === 'Enter') {
+			handleSearch();
+		}
+	};
 
 	return (
 		<Container fluid className='contained hero container-fluid'>
@@ -174,6 +179,7 @@ const Insights = () => {
 							<input
 								value={searchVal}
 								onChange={handleSearchText}
+								onKeyDown={handleKeyDown}
 								placeholder={'Company name, position'}
 							/>
 							<Button variant='danger' onClick={handleSearch}>
